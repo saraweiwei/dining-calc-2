@@ -15,6 +15,7 @@
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --accent-blue: #4dabf7;
+            --accent-red: #ff5252;
             --text-main: #FFFFFF;
             --text-dim: #94a3b8;
             --input-bg: #2d2d2d;
@@ -48,7 +49,16 @@
         header { text-align: center; margin-bottom: 2rem; }
         h1 { font-family: var(--font-en); font-weight: 300; font-size: 1.2rem; color: var(--text-dim); margin: 0; letter-spacing: 2px; text-transform: uppercase; }
 
-        .section-title { font-size: 0.95rem; color: var(--accent-blue); margin-bottom: 1.2rem; font-weight: bold; border-left: 3px solid var(--accent-blue); padding-left: 10px; }
+        .section-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 1.2rem;
+            border-left: 3px solid var(--accent-blue);
+            padding-left: 10px;
+        }
+        .section-title { font-size: 0.95rem; color: var(--accent-blue); font-weight: bold; margin: 0; }
+        .clear-link { color: var(--text-dim); font-size: 0.75rem; text-decoration: underline; cursor: pointer; }
 
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 1.5rem; width: 100%; }
         .full-width { grid-column: span 2; }
@@ -90,6 +100,7 @@
             font-weight: bold;
             cursor: pointer;
         }
+        .op-btn.clear { color: var(--accent-red); background: rgba(255, 82, 82, 0.1); }
 
         .ratio-display {
             background: rgba(77, 171, 247, 0.1);
@@ -128,7 +139,11 @@
         <h1>AZ Dining Master</h1>
     </header>
 
-    <div class="section-title">Bill Overview</div>
+    <div class="section-header">
+        <h2 class="section-title">Bill Overview</h2>
+        <span class="clear-link" onclick="clearAll()">Clear All</span>
+    </div>
+
     <div class="grid">
         <div class="input-group full-width">
             <label>發票餐點原價 (Subtotal)</label>
@@ -151,7 +166,10 @@
 
     <div class="divider"></div>
 
-    <div class="section-title">個人分攤 (Personal Share)</div>
+    <div class="section-header">
+        <h2 class="section-title">個人分攤 (Personal Share)</h2>
+    </div>
+
     <div class="input-group">
         <label>個人餐點原價</label>
         <input type="text" id="personSubtotal" placeholder="0.00" inputmode="decimal">
@@ -160,6 +178,7 @@
             <button class="op-btn" onclick="addOp('-')">-</button>
             <button class="op-btn" onclick="addOp('*')">×</button>
             <button class="op-btn" onclick="addOp('/')">÷</button>
+            <button class="op-btn clear" onclick="clearPersonal()">C</button>
         </div>
     </div>
 
@@ -191,6 +210,21 @@
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
+    }
+
+    // 清除全部 (連同個人分攤)
+    function clearAll() {
+        elements.billSubtotal.value = "";
+        elements.billTax.value = "";
+        elements.billTip.value = "";
+        elements.personSubtotal.value = "";
+        calculate();
+    }
+
+    // 僅清除個人分攤
+    function clearPersonal() {
+        elements.personSubtotal.value = "";
+        calculate();
     }
 
     function addOp(op) {
