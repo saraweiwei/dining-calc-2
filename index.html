@@ -36,7 +36,7 @@
             padding: 2.5rem 1.8rem;
             border-radius: 28px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
-            box-sizing: border-box; /* 確保內距不撐開寬度 */
+            box-sizing: border-box;
         }
 
         header { text-align: center; margin-bottom: 2rem; }
@@ -62,7 +62,7 @@
             font-weight: bold;
             outline: none;
             transition: border-color 0.2s;
-            box-sizing: border-box; /* 關鍵：格子對齊不凸出 */
+            box-sizing: border-box;
             -webkit-appearance: none;
         }
         input:focus { border-color: var(--accent-blue); }
@@ -104,7 +104,7 @@
         <h1>Calculator</h1>
     </header>
 
-    <div class="section-title">Calculator</div>
+    <div class="section-title">Bill Overview</div>
     <div class="grid">
         <div class="input-group full-width">
             <label>發票餐點原價 (Subtotal)</label>
@@ -127,14 +127,14 @@
 
     <div class="divider"></div>
 
-    <div class="section-title">個人分攤(Personal Share)</div>
+    <div class="section-title">個人分攤 (Personal Share)</div>
     <div class="input-group">
-        <label>個人餐點原價(Personal Order)</label>
-        <input type="number" id="personSubtotal" placeholder="Enter amount" inputmode="decimal">
+        <label>個人餐點原價 (支援算式如 25+12)</label>
+        <input type="text" id="personSubtotal" placeholder="0.00" inputmode="tel">
     </div>
 
     <div class="total-container">
-        <span class="total-label">您應付總額(Personal Share)</span>
+        <span class="total-label">您應付總額 (Personal Share)</span>
         <div class="total-amount" id="personTotal">$0.00</div>
     </div>
 
@@ -163,11 +163,27 @@
         });
     }
 
+    // 解析算式的安全函數
+    function parseExpression(str) {
+        try {
+            // 只保留數字、小數點、加減乘除符號
+            const cleanStr = str.replace(/[^-0-9+*/.]/g, '');
+            if (!cleanStr) return 0;
+            // 使用 new Function 進行運算，避免直接 eval 全域變數
+            const result = new Function(`return ${cleanStr}`)();
+            return isFinite(result) ? result : 0;
+        } catch (e) {
+            return 0;
+        }
+    }
+
     function calculate() {
         const bSub = parseFloat(elements.billSubtotal.value) || 0;
         const bTax = parseFloat(elements.billTax.value) || 0;
         const bTip = parseFloat(elements.billTip.value) || 0;
-        const pSub = parseFloat(elements.personSubtotal.value) || 0;
+        
+        // 個人金額透過解析器處理
+        const pSub = parseExpression(elements.personSubtotal.value);
 
         let taxRate = 0;
         let tipRate = 0;
