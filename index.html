@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AZ Dining Master</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="AZ Dining">
+    <link rel="apple-touch-icon" href="icon.png">
+
     <style>
         :root {
             --bg-color: #121212;
@@ -67,7 +73,6 @@
         }
         input:focus { border-color: var(--accent-blue); }
 
-        /* 符號按鈕樣式 */
         .op-container {
             display: flex;
             gap: 8px;
@@ -84,7 +89,6 @@
             font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            active { background: #444; }
         }
 
         .ratio-display {
@@ -121,7 +125,7 @@
 
 <div class="card">
     <header>
-        <h1>Calculator</h1>
+        <h1>AZ Dining Master</h1>
     </header>
 
     <div class="section-title">Bill Overview</div>
@@ -189,7 +193,6 @@
         });
     }
 
-    // 點擊符號按鈕時，將符號填入並觸發計算
     function addOp(op) {
         elements.personSubtotal.value += op;
         elements.personSubtotal.focus();
