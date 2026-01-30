@@ -67,6 +67,26 @@
         }
         input:focus { border-color: var(--accent-blue); }
 
+        /* 符號按鈕樣式 */
+        .op-container {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+        .op-btn {
+            flex: 1;
+            background: #333;
+            border: none;
+            color: var(--accent-blue);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            active { background: #444; }
+        }
+
         .ratio-display {
             background: rgba(77, 171, 247, 0.1);
             border-radius: 12px;
@@ -129,8 +149,14 @@
 
     <div class="section-title">個人分攤 (Personal Share)</div>
     <div class="input-group">
-        <label>個人餐點原價 (支援算式如 25+12)</label>
-        <input type="text" id="personSubtotal" placeholder="0.00" inputmode="tel">
+        <label>個人餐點原價</label>
+        <input type="text" id="personSubtotal" placeholder="0.00" inputmode="decimal">
+        <div class="op-container">
+            <button class="op-btn" onclick="addOp('+')">+</button>
+            <button class="op-btn" onclick="addOp('-')">-</button>
+            <button class="op-btn" onclick="addOp('*')">×</button>
+            <button class="op-btn" onclick="addOp('/')">÷</button>
+        </div>
     </div>
 
     <div class="total-container">
@@ -163,13 +189,17 @@
         });
     }
 
-    // 解析算式的安全函數
+    // 點擊符號按鈕時，將符號填入並觸發計算
+    function addOp(op) {
+        elements.personSubtotal.value += op;
+        elements.personSubtotal.focus();
+        calculate();
+    }
+
     function parseExpression(str) {
         try {
-            // 只保留數字、小數點、加減乘除符號
             const cleanStr = str.replace(/[^-0-9+*/.]/g, '');
             if (!cleanStr) return 0;
-            // 使用 new Function 進行運算，避免直接 eval 全域變數
             const result = new Function(`return ${cleanStr}`)();
             return isFinite(result) ? result : 0;
         } catch (e) {
@@ -181,8 +211,6 @@
         const bSub = parseFloat(elements.billSubtotal.value) || 0;
         const bTax = parseFloat(elements.billTax.value) || 0;
         const bTip = parseFloat(elements.billTip.value) || 0;
-        
-        // 個人金額透過解析器處理
         const pSub = parseExpression(elements.personSubtotal.value);
 
         let taxRate = 0;
